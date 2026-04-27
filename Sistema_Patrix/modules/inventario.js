@@ -326,7 +326,7 @@ export function imprimirRelatorio() {
     <div style="font-family:'DM Sans',Arial,sans-serif;color:#111;max-width:1100px;margin:0 auto">
       <div style="display:flex;justify-content:space-between;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid #e5e7eb">
         <div>
-          <div style="font-size:22px;font-weight:700">PatrimônioGest</div>
+          <div style="font-size:22px;font-weight:700">PatriX</div>
           <div style="font-size:13px;color:#6b7280">Relatório de Depreciação</div>
         </div>
         <div style="text-align:right;font-size:11px;color:#9ca3af">
@@ -386,7 +386,7 @@ export function imprimirRelatorio() {
         </tfoot>
       </table>
       <div style="margin-top:24px;padding-top:12px;border-top:1px solid #e5e7eb;font-size:10px;color:#9ca3af;display:flex;justify-content:space-between">
-        <span>PatrimônioGest v2.4</span><span>${agora}</span>
+        <span>PatriX v2.4</span><span>${agora}</span>
       </div>
     </div>`;
 
