@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PatriX — Gestão Patrimonial</title>
 
   <!-- Fontes -->
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
 
   <!-- Estilos -->
   <link rel="stylesheet" href="style.css">
@@ -14,6 +17,7 @@
   <!-- Chart.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js" defer></script>
 </head>
+
 <body>
 
   <!-- ══ Loading overlay ══ -->
@@ -41,48 +45,22 @@
   <!-- ══ Área de impressão ══ -->
   <div id="print-area"></div>
 
-  <!-- ══ Supabase SDK ══ -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <!-- ══ Auth / Sessão ══
-       Inicializa o cliente Supabase e valida a sessão antes de carregar o app.
-       Caso não autenticado ou sessão expirada, redireciona para login. -->
+  <!-- ══ Auth / Sessão (MODO LOCAL) ══
+       Neste estágio de transição, a autenticação obrigatória foi removida.
+       O sistema opera em modo local/híbrido até a implementação do novo backend. -->
   <script>
-    const { createClient } = supabase;
-    const _sb = createClient(
-      'https://nlrfgtfzszqnjzidkjvl.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5scmZndGZ6c3pxbmp6aWRranZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwODA2NTYsImV4cCI6MjA5MTY1NjY1Nn0.LtNyrnskJSfRreQO_3KMZw4GoO00aoROTxl-_Pvc_h4'
-    );
+    console.log('🚀 PatriX iniciado em modo de transição (Local/Mock)');
 
-    const QUINZE_DIAS_MS = 15 * 24 * 60 * 60 * 1000;
+    // Mock do cliente Supabase para evitar erros de referência no config.js
+    window._sb = {
+      auth: { getSession: () => Promise.resolve({ data: { session: null } }), signOut: () => { } },
+      from: () => ({ select: () => ({ order: () => Promise.resolve({ data: [], error: null }) }) })
+    };
 
-    const sessionTimeout = setTimeout(() => {
-      // Se demorar mais de 5s, deixa carregar sem autenticação (modo offline)
-      console.warn('Timeout na verificação de sessão — carregando offline');
-    }, 5000);
-
-    _sb.auth.getSession().then(({ data }) => {
-      clearTimeout(sessionTimeout);
-      if (!data.session) {
-        // Sem sessão ativa — redireciona para login.html (mesmo diretório)
-        window.location.href = 'login.html';
-        return;
-      }
-      const ultimoLogin = localStorage.getItem('patrix_login_time');
-      const agora = Date.now();
-      if (!ultimoLogin || (agora - parseInt(ultimoLogin)) > QUINZE_DIAS_MS) {
-        // Sessão expirada — faz logout e redireciona para login.html
-        _sb.auth.signOut();
-        localStorage.removeItem('patrix_login_time');
-        window.location.href = 'login.html';
-      }
-    });
-
-    // Logout: encerra a sessão no Supabase e redireciona para login.html
-    async function logout() {
-      await _sb.auth.signOut();
-      localStorage.removeItem('patrix_login_time');
-      window.location.href = 'login.html';
+    // Logout limpa apenas o estado local
+    function logout() {
+      localStorage.clear();
+      window.location.reload();
     }
   </script>
 
@@ -92,4 +70,5 @@
   <script src="js/loader.js"></script>
 
 </body>
+
 </html>

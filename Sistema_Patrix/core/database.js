@@ -30,20 +30,20 @@ import { supabase, AppState, LS_KEYS } from './config.js';
  */
 function mapInventarioRow(row) {
   return {
-    id:      row.id,
-    cat:     row.item_bem        || '',
-    desc:    row.descricao       || '',
-    prod:    row.produto         || '',
-    tipo:    row.tipo            || '',
-    val:     parseFloat(row.valor_aquisicao) || 0,
-    dt:      row.data_aquisicao  || new Date().toISOString().slice(0, 10),
-    vd:      parseFloat(row.vida_util)       || 1,
-    taxa:    parseFloat(row.taxa_ano)        || 0,
-    res:     parseFloat(row.valor_residual)  || 0,
-    metodo:  row.metodo          || 'linear',
-    status:  row.status          || 'acompanhamento',
-    obs:     row.obs             || '',
-    addedAt: row.created_at      || new Date().toISOString(),
+    id: row.id,
+    cat: row.item_bem || '',
+    desc: row.descricao || '',
+    prod: row.produto || '',
+    tipo: row.tipo || '',
+    val: parseFloat(row.valor_aquisicao) || 0,
+    dt: row.data_aquisicao || new Date().toISOString().slice(0, 10),
+    vd: parseFloat(row.vida_util) || 1,
+    taxa: parseFloat(row.taxa_ano) || 0,
+    res: parseFloat(row.valor_residual) || 0,
+    metodo: row.metodo || 'linear',
+    status: row.status || 'acompanhamento',
+    obs: row.obs || '',
+    addedAt: row.created_at || new Date().toISOString(),
   };
 }
 
@@ -56,27 +56,27 @@ function mapInventarioRow(row) {
  */
 function mapPatrimonioGeralRow(row, idx) {
   const val = parseFloat(row.valor_item || row.val || row.value || 0);
-  const vd  = parseFloat(row.vida_util_anos || row.vd || row.vida_util || 1);
-  const dt  = (row.data_aquisicao || row.dt || row.created_at || new Date().toISOString())
+  const vd = parseFloat(row.vida_util_anos || row.vd || row.vida_util || 1);
+  const dt = (row.data_aquisicao || row.dt || row.created_at || new Date().toISOString())
     .toString().slice(0, 10);
 
   return {
-    id:          row.id || row.n_patrimonio || (Date.now() + idx),
-    desc:        row.descricao_item || row.desc || row.nome || `Item ${idx + 1}`,
-    tipo:        row.conta || row.tipo || row.categoria || 'Outros',
-    prod:        row.marca_item || row.prod || row.produto || '',
-    modelo:      row.modelo_item        || '',
-    filial:      row.filial_local       || '',
-    centro_custo: row.centro_custo      || '',
-    n_patrimonio: row.n_patrimonio      || '',
-    nota_fiscal:  row.nota_fiscal       || '',
-    estado:      row.estado_conservacao || '',
-    obs:         row.observacao || row.obs || '',
+    id: row.id || row.n_patrimonio || (Date.now() + idx),
+    desc: row.descricao_item || row.desc || row.nome || `Item ${idx + 1}`,
+    tipo: row.conta || row.tipo || row.categoria || 'Outros',
+    prod: row.marca_item || row.prod || row.produto || '',
+    modelo: row.modelo_item || '',
+    filial: row.filial_local || '',
+    centro_custo: row.centro_custo || '',
+    n_patrimonio: row.n_patrimonio || '',
+    nota_fiscal: row.nota_fiscal || '',
+    estado: row.estado_conservacao || '',
+    obs: row.observacao || row.obs || '',
     val, vd,
-    res:   val * 0.20,
-    taxa:  parseFloat(row.taxa || 0),
+    res: val * 0.20,
+    taxa: parseFloat(row.taxa || 0),
     dt,
-    status:  (row.status || 'acompanhamento').toString().trim(),
+    status: (row.status || 'acompanhamento').toString().trim(),
     addedAt: row.created_at || row.addedAt || new Date().toISOString(),
   };
 }
@@ -101,9 +101,20 @@ export async function carregarInventario() {
     if (error) throw error;
 
     AppState.inv = (data || []).map(mapInventarioRow);
+
+    // Salva cópia local para uso offline
+    localStorage.setItem('patrix_cache_inv', JSON.stringify(AppState.inv));
+
     return true;
   } catch (e) {
-    console.warn('Erro ao carregar inventário:', e.message);
+    console.warn('Banco offline — carregando do cache local:', e.message);
+
+    // Tenta carregar do cache se o banco falhar
+    const cache = localStorage.getItem('patrix_cache_inv');
+    if (cache) {
+      AppState.inv = JSON.parse(cache);
+      return true; // Retorna true para deixar o app rodar com dados locais
+    }
     return false;
   }
 }
@@ -117,18 +128,18 @@ export async function carregarInventario() {
 export async function salvarItemInventario(item) {
   try {
     const { error } = await supabase.from('Inventario_Realizado').insert([{
-      item_bem:        item.cat,
-      descricao:       item.desc,
-      produto:         item.prod,
-      tipo:            item.tipo,
+      item_bem: item.cat,
+      descricao: item.desc,
+      produto: item.prod,
+      tipo: item.tipo,
       valor_aquisicao: parseFloat(item.val),
-      data_aquisicao:  item.dt,
-      vida_util:       parseFloat(item.vd),
-      taxa_ano:        parseFloat(item.taxa),
-      metodo:          item.metodo || 'linear',
-      valor_residual:  parseFloat(item.res),
-      status:          item.status || 'acompanhamento',
-      obs:             item.obs || '',
+      data_aquisicao: item.dt,
+      vida_util: parseFloat(item.vd),
+      taxa_ano: parseFloat(item.taxa),
+      metodo: item.metodo || 'linear',
+      valor_residual: parseFloat(item.res),
+      status: item.status || 'acompanhamento',
+      obs: item.obs || '',
     }]);
 
     if (error) throw error;
@@ -218,8 +229,10 @@ export async function carregarPatrimonioGeral(onProgress) {
     AppState.invBD = allData.map(mapPatrimonioGeralRow);
     return true;
   } catch (e) {
-    console.warn('Erro ao carregar Patrimônio Geral:', e.message);
-    return false;
+    console.warn('Patrimônio Geral em modo offline:', e.message);
+    const cache = localStorage.getItem('patrix_cache_bd');
+    AppState.invBD = cache ? JSON.parse(cache) : []; // Fallback seguro
+    return true;
   }
 }
 
@@ -243,42 +256,47 @@ export async function carregarEPI() {
     if (error) throw error;
 
     AppState.invEPI = (data || []).map((item) => ({
-      id:                  item.id,
-      data_criacao:        item.data_criacao        || '',
-      num_nota:            item.num_nota            || '',
-      local:               item.local               || '',
+      id: item.id,
+      data_criacao: item.data_criacao || '',
+      num_nota: item.num_nota || '',
+      local: item.local || '',
       operacao_financeira: item.operacao_financeira || '',
-      produto:             item.produto             || '',
-      nome_colaborador:    item.nome_colaborador    || '',
-      data_cadastro:       item.data_cadastro       || '',
-      tempo_colaborador:   item.tempo_colaborador   || '',
-      tipo_frete:          item.tipo_frete          || '',
-      perfil:              item.perfil              || '',
-      equipe:              item.equipe              || '',
-      data_emissao:        item.data_emissao        || '',
-      tempo_cliente:       item.tempo_cliente       || '',
-      serie_tipo:          item.serie_tipo          || '',
-      descricao:           item.descricao           || '',
-      observacao:          item.observacao          || '',
-      tec_equip:           item.tec_equip           || '',
-      grupo_produto:       item.grupo_produto       || '',
-      split_part:          item.split_part          || '',
-      dias:                parseInt(item.dias)              || 0,
-      total_nota:          parseFloat(item.total_nota)      || 0,
-      total_cad:           parseFloat(item.total_cad)       || 0,
-      quantidade:          parseInt(item.quantidade)        || 0,
-      class_colab:         item.class_colab         || '',
-      v_residual:          parseFloat(item.v_residual)      || 0,
-      depreciacao:         parseFloat(item.depreciacao)     || 0,
-      data_troca:          item.data_troca          || '',
-      dias_restantes:      parseInt(item.dias_restantes)    || 0,
-      situacao:            item.situacao            || '',
+      produto: item.produto || '',
+      nome_colaborador: item.nome_colaborador || '',
+      data_cadastro: item.data_cadastro || '',
+      tempo_colaborador: item.tempo_colaborador || '',
+      tipo_frete: item.tipo_frete || '',
+      perfil: item.perfil || '',
+      equipe: item.equipe || '',
+      data_emissao: item.data_emissao || '',
+      tempo_cliente: item.tempo_cliente || '',
+      serie_tipo: item.serie_tipo || '',
+      descricao: item.descricao || '',
+      observacao: item.observacao || '',
+      tec_equip: item.tec_equip || '',
+      grupo_produto: item.grupo_produto || '',
+      split_part: item.split_part || '',
+      dias: parseInt(item.dias) || 0,
+      total_nota: parseFloat(item.total_nota) || 0,
+      total_cad: parseFloat(item.total_cad) || 0,
+      quantidade: parseInt(item.quantidade) || 0,
+      class_colab: item.class_colab || '',
+      v_residual: parseFloat(item.v_residual) || 0,
+      depreciacao: parseFloat(item.depreciacao) || 0,
+      data_troca: item.data_troca || '',
+      dias_restantes: parseInt(item.dias_restantes) || 0,
+      situacao: item.situacao || '',
+    }));
+
+    AppState.invEPI = (data || []).map((item) => ({
+      // ... mapeamento ...
     }));
 
     return true;
   } catch (e) {
-    console.warn('Erro ao carregar EPI:', e.message);
-    return false;
+    console.warn('EPI em modo offline:', e.message);
+    AppState.invEPI = []; // Fallback seguro
+    return true;
   }
 }
 
@@ -291,16 +309,16 @@ export async function carregarEPI() {
 export async function salvarItemEPI(item) {
   try {
     const { error } = await supabase.from('fardamentos_epi').insert([{
-      descricao:        item.nome,
-      grupo_produto:    item.tipo,
+      descricao: item.nome,
+      grupo_produto: item.tipo,
       nome_colaborador: item.colab,
-      equipe:           item.setor,
-      data_criacao:     item.dtEntrega || new Date().toISOString().slice(0, 10),
-      data_troca:       item.dtVenc    || null,
-      total_nota:       item.valor,
-      split_part:       item.codigo,
-      situacao:         item.status,
-      observacao:       item.obs,
+      equipe: item.setor,
+      data_criacao: item.dtEntrega || new Date().toISOString().slice(0, 10),
+      data_troca: item.dtVenc || null,
+      total_nota: item.valor,
+      split_part: item.codigo,
+      situacao: item.status,
+      observacao: item.obs,
     }]);
 
     if (error) throw error;

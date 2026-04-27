@@ -10,37 +10,30 @@
  * ============================================================
  */
 
-// ── CREDENCIAIS SUPABASE ──────────────────────────────────────
-// Estas credenciais são públicas (anon key) e controladas via RLS no painel Supabase.
-export const SUPABASE_URL = 'https://nlrfgtfzszqnjzidkjvl.supabase.co';
-export const SUPABASE_KEY =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.' +
-  'eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5scmZndGZ6c3pxbmp6aWRranZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwODA2NTYsImV4cCI6MjA5MTY1NjY1Nn0.' +
-  'LtNyrnskJSfRreQO_3KMZw4GoO00aoROTxl-_Pvc_h4';
-
-// ── CLIENTE SUPABASE ──────────────────────────────────────────
-// _sb é injetado globalmente pelo SDK do Supabase carregado no HTML.
-// Exportamos como alias para uso nos módulos.
+// ── CONFIGURAÇÕES DE TRANSIÇÃO (POSTGRES / MOCK) ─────────────────
+// As credenciais do Supabase foram removidas. 
+// O sistema agora utiliza window._sb (definido no index.html) como ponte.
 export const supabase = window._sb;
+export const API_BASE_URL = 'http://localhost:3000'; // Exemplo para seu futuro backend Node.js
 
 // ── PALETA DE CORES POR TIPO DE BEM ──────────────────────────
 // Usado em gráficos, badges e marcadores de lista.
 export const TIPO_COLORS = {
-  'Telefonia':                     '#4e9eff',
-  'Informática':                   '#a78bfa',
-  'Móveis':                        '#f5a623',
-  'Equipamento':                   '#00d4aa',
-  'Fardamento':                    '#f472b6',
-  'EPI':                           '#fb923c',
-  'Materiais Diversos':            '#34d399',
-  'BENS DE USO':                   '#4e9eff',
-  'CELULARES':                     '#a78bfa',
-  'EQUIPAMENTOS DE INFORMÁTICA':   '#f5a623',
-  'EQUIPAMENTOS':                  '#00d4aa',
-  'MÓVEIS PLANEJADOS':             '#f472b6',
-  'VEÍCULOS':                      '#fb923c',
-  'Outros':                        '#8b9099',
-  '':                              '#8b9099',
+  'Telefonia': '#4e9eff',
+  'Informática': '#a78bfa',
+  'Móveis': '#f5a623',
+  'Equipamento': '#00d4aa',
+  'Fardamento': '#f472b6',
+  'EPI': '#fb923c',
+  'Materiais Diversos': '#34d399',
+  'BENS DE USO': '#4e9eff',
+  'CELULARES': '#a78bfa',
+  'EQUIPAMENTOS DE INFORMÁTICA': '#f5a623',
+  'EQUIPAMENTOS': '#00d4aa',
+  'MÓVEIS PLANEJADOS': '#f472b6',
+  'VEÍCULOS': '#fb923c',
+  'Outros': '#8b9099',
+  '': '#8b9099',
 };
 
 /**
@@ -121,7 +114,7 @@ export const fmtDate = (s) =>
 
 // ── CHAVES DO LOCALSTORAGE ────────────────────────────────────
 export const LS_KEYS = {
-  HIST:   'patrimgest_hist',
-  MON:    'patrimgest_mon_config',
+  HIST: 'patrimgest_hist',
+  MON: 'patrimgest_mon_config',
   CONFIG: 'patrimgest_config',
 };
