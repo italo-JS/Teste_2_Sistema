@@ -202,9 +202,14 @@ async function sincronizar() {
 }
 
 // ════════════════════════════════════════════════════════════════
-// DOMContentLoaded — inicialização da aplicação
+// INICIALIZAÇÃO DA APLICAÇÃO
 // ════════════════════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', async function () {
+// Como este script é carregado como módulo após o DOM estar pronto (via loader.js),
+// não precisamos do evento DOMContentLoaded. Chamamos a função init direto.
+
+async function initApp() {
+  const overlay     = document.getElementById('loading-overlay');
+  const loadingText = document.getElementById('loading-text');
 
   // ── 1. Sidebar ──────────────────────────────────────────────
   initSidebar();
@@ -234,9 +239,6 @@ document.addEventListener('DOMContentLoaded', async function () {
   initCalcAutoComplete();
 
   // ── 6. Carga inicial do inventário ──────────────────────────
-  const overlay     = document.getElementById('loading-overlay');
-  const loadingText = document.getElementById('loading-text');
-
   try { loadHistLocal(); }      catch (e) {}
   try { updateBadges(); }       catch (e) {}
   try { renderDashboard(); }    catch (e) {}
@@ -257,14 +259,22 @@ document.addEventListener('DOMContentLoaded', async function () {
     console.warn('Erro ao inicializar inventário:', e);
   }
 
-  // ── 7. Auto-sync: Patrimônio_Geral ──────────────────────────
+  // ── 7. Auto-sync: Patrimônio_Geral com Timeout ──────────────
   try {
-    if (loadingText) loadingText.textContent = 'Carregando dados do Patrimônio Geral...';
+    if (loadingText) loadingText.textContent = 'Sincronizando banco de dados...';
     if (overlay) overlay.classList.remove('hidden');
 
-    await carregarPatrimonioGeral((count) => {
-      if (loadingText) loadingText.textContent = `Carregando BD... ${count} itens`;
-    });
+    // Proteção contra travamento do fetch do Supabase (offline/lentidão)
+    const bdTimeout = new Promise((_, rej) =>
+      setTimeout(() => rej(new Error('Timeout BD')), 8000)
+    );
+
+    await Promise.race([
+      carregarPatrimonioGeral((count) => {
+        if (loadingText) loadingText.textContent = `Carregando BD... ${count} itens`;
+      }),
+      bdTimeout
+    ]);
 
     const alertas = AppState.invBD.filter(
       i => calcDep(i).restMeses <= 12 && i.status !== 'perdido'
@@ -277,7 +287,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     console.log(`✅ BD auto-sincronizado: ${AppState.invBD.length} itens`);
   } catch (e) {
-    console.warn('Auto-sync BD error:', e);
+    console.warn('Auto-sync BD ignorado (sem conexão ou lento):', e.message);
   }
 
   // ── 8. Realtime subscription ─────────────────────────────────
@@ -300,5 +310,9 @@ document.addEventListener('DOMContentLoaded', async function () {
   try { carregarConfiguracoes(); } catch (e) {}
 
   // ── 10. Esconde overlay de loading ──────────────────────────
+  // Garantimos que o overlay some mesmo se houver erros acima
   if (overlay) overlay.classList.add('hidden');
-});
+}
+
+// Inicializa a aplicação
+initApp();
