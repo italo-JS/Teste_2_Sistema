@@ -58,21 +58,21 @@
   /* ── Listas de componentes ────────────────────────────────── */
 
   const PAGES = [
-    'pages/page-dashboard.html',
-    'pages/page-calculadora.html',
-    'pages/page-inventario.html',
-    'pages/page-depreciacao.html',
-    'pages/page-mensal.html',
-    'pages/page-historico.html',
-    'pages/page-monitoramento.html',
-    'pages/page-epi.html',
-    'pages/page-configuracoes.html',
+    './pages/page-dashboard.html',
+    './pages/page-calculadora.html',
+    './pages/page-inventario.html',
+    './pages/page-depreciacao.html',
+    './pages/page-mensal.html',
+    './pages/page-historico.html',
+    './pages/page-monitoramento.html',
+    './pages/page-epi.html',
+    './pages/page-configuracoes.html',
   ];
 
   const MODALS = [
-    'modals/modal-epi-novo.html',
-    'modals/modal-epi-relatorio.html',
-    'modals/modal-monitoramento.html',
+    './modals/modal-epi-novo.html',
+    './modals/modal-epi-relatorio.html',
+    './modals/modal-monitoramento.html',
   ];
 
   /* ── Pipeline de injeção ──────────────────────────────────── */
@@ -80,8 +80,8 @@
   try {
     // 1) Estrutura base (sidebar + topbar) — paralelo
     await Promise.all([
-      replaceById('sidebar-placeholder', 'components/sidebar.html'),
-      replaceById('topbar-placeholder',  'components/topbar.html'),
+      replaceById('sidebar-placeholder', './components/sidebar.html'),
+      replaceById('topbar-placeholder',  './components/topbar.html'),
     ]);
 
     // 2) Páginas — paralelo
