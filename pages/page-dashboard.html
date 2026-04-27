@@ -1,0 +1,106 @@
+<!-- ══════════════════════════════
+     PAGE: DASHBOARD
+     KPIs, gráficos e acompanhamento de depreciação individual
+     ══════════════════════════════ -->
+<div class="page active" id="page-dashboard">
+
+  <!-- KPIs -->
+  <div class="stats" style="grid-template-columns:repeat(3,1fr)">
+    <div class="stat-card">
+      <div class="stat-top">
+        <div class="stat-icon" style="background:var(--accent-dim)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+        <span class="stat-trend" style="color:var(--accent)" id="ds-pct">—</span>
+      </div>
+      <div class="stat-label">Valor Total Contábil</div>
+      <div class="stat-value" style="color:var(--accent)" id="ds-contabil">R$ 0,00</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top"><div class="stat-icon" style="background:var(--blue-dim)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M13 17H1M13 17l-4-4m4 4l-4 4"/></svg></div></div>
+      <div class="stat-label">Depreciação Total</div>
+      <div class="stat-value" style="color:var(--blue)" id="ds-dep">R$ 0,00</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top"><div class="stat-icon" style="background:var(--amber-dim)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div></div>
+      <div class="stat-label">Total de Bens</div>
+      <div class="stat-value" style="color:var(--amber)" id="ds-qtd">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-top"><div class="stat-icon" style="background:var(--red-dim)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg></div></div>
+      <div class="stat-label">Alertas de Vencimento</div>
+      <div class="stat-value" style="color:var(--red)" id="ds-alertas">0</div>
+    </div>
+    <div class="stat-card" style="border-color:rgba(167,139,250,.2)">
+      <div class="stat-top"><div class="stat-icon" style="background:var(--purple-dim)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div></div>
+      <div class="stat-label">Em Acompanhamento</div>
+      <div class="stat-value" style="color:var(--purple)" id="ds-acomp">0</div>
+    </div>
+    <div class="stat-card" style="border-color:rgba(255,92,92,.15)">
+      <div class="stat-top"><div class="stat-icon" style="background:var(--red-dim)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div></div>
+      <div class="stat-label">Perdidos / Quebrados</div>
+      <div class="stat-value" style="color:var(--red)" id="ds-perdidos">0</div>
+    </div>
+  </div>
+
+  <!-- Gráficos -->
+  <div class="grid2">
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Valor contábil por tipo</div><div class="card-sub">Distribuição atual do patrimônio</div></div></div>
+      <div class="card-body"><div class="chart-wrap"><canvas id="chart-tipo"></canvas></div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Top 8 — Maior depreciação acumulada</div><div class="card-sub">Bens com maior depreciação acumulada</div></div></div>
+      <div class="card-body"><div class="chart-wrap"><canvas id="chart-top"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- Alertas de vencimento -->
+  <div class="card">
+    <div class="card-header"><div><div class="card-title">Alertas de Vencimento</div><div class="card-sub">Bens com vida útil expirando nos próximos 12 meses</div></div><span class="badge badge-red" id="dash-nalert">0 alertas</span></div>
+    <div class="card-body" id="dash-alertas-body">
+      <div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><div class="empty-title">Nenhum alerta</div><div class="empty-sub">Todos os bens têm vida útil adequada</div></div>
+    </div>
+  </div>
+
+  <!-- Itens perdidos / quebrados -->
+  <div class="card" id="dash-perdidos-card" style="display:none">
+    <div class="card-header"><div><div class="card-title">⚠️ Itens Perdidos / Quebrados</div></div><span class="badge badge-red" id="dash-nperdidos">0 itens</span></div>
+    <div class="card-body" id="dash-perdidos-body"></div>
+  </div>
+
+  <!-- Acompanhamento individual -->
+  <div class="card">
+    <div class="card-header"><div><div class="card-title">Acompanhamento de Depreciação</div><div class="card-sub">Selecione um bem para ver a evolução detalhada</div></div><span class="badge badge-purple" id="dash-acomp-badge" style="display:none">Item selecionado</span></div>
+    <div class="card-body">
+      <div style="margin-bottom:16px">
+        <label style="font-size:10px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:6px">Buscar item do inventário</label>
+        <div class="ac-wrap" id="dash-ac-wrap">
+          <input class="ac-input" id="dash-ac-input" type="text" placeholder="Digite para buscar..." autocomplete="off" oninput="dashAcInput(this.value)" onfocus="dashAcFocus()" onkeydown="dashAcKeyNav(event)"/>
+          <button class="ac-clear" id="dash-ac-clear" type="button" onclick="dashAcClear()">✕</button>
+          <div class="ac-dropdown" id="dash-ac-dropdown"><div class="ac-list" id="dash-ac-list"></div></div>
+        </div>
+        <div id="dash-selected-pill" style="display:none;margin-top:8px;padding:10px 14px;background:var(--bg4);border:1px solid var(--border);border-radius:var(--r);align-items:center;justify-content:space-between;gap:10px">
+          <div style="display:flex;align-items:center;gap:8px;min-width:0"><span id="dash-pill-dot" style="width:9px;height:9px;border-radius:50%;flex-shrink:0;background:var(--accent)"></span><span id="dash-pill-nome" style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">—</span></div>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0"><span id="dash-pill-status" style="font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px"></span><button onclick="dashAcClear()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:2px 4px">✕</button></div>
+        </div>
+      </div>
+      <div id="dash-acomp-empty" style="text-align:center;padding:32px 20px;color:var(--text3)">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin:0 auto 10px;display:block;opacity:.3"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <div style="font-size:13px;font-weight:500;color:var(--text2);margin-bottom:4px">Nenhum item selecionado</div>
+        <div style="font-size:11px">Escolha um bem acima para ver o acompanhamento</div>
+      </div>
+      <div id="dash-acomp-content" style="display:none">
+        <div style="margin-bottom:18px" id="dash-acomp-cards"></div>
+        <div style="margin-bottom:6px;font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em">Evolução do valor ao longo do tempo</div>
+        <div style="position:relative;height:200px"><canvas id="chart-acomp"></canvas></div>
+        <div style="margin-top:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <span style="font-size:11px;color:var(--text3)">Progresso de depreciação</span>
+            <span style="font-size:11px;font-weight:600;font-family:'DM Mono',monospace" id="dash-acomp-pct">0%</span>
+          </div>
+          <div class="progress-wrap" style="height:8px"><div class="progress-fill" id="dash-acomp-bar" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-dashboard -->

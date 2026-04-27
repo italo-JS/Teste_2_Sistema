@@ -1,0 +1,111 @@
+<!-- ══════════════════════════════════════
+     MODAL: NOVO ITEM EPI / FARDAMENTO
+     Responsabilidade: formulário para cadastrar um novo item
+     de EPI ou fardamento no banco de dados Supabase.
+     Ativação: epiAbrirNovoItem() → exibe este modal
+     Fechamento: epiFecharModal() → oculta este modal
+     Funções JS relacionadas (modules/epi.js):
+       - epiAbrirNovoItem()   → abre o modal e reseta os campos
+       - epiFecharModal()     → fecha o modal
+       - epiSalvarNovoItem()  → valida e envia os dados ao Supabase
+     ══════════════════════════════════════ -->
+<div class="modal-overlay" id="epi-modal-novo"
+     onclick="if(event.target===this)epiFecharModal()">
+  <div class="modal" style="width:640px;max-width:95vw;max-height:90vh;display:flex;flex-direction:column;overflow-y:auto">
+
+    <!-- Cabeçalho do modal -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div>
+        <div class="modal-title">+ Novo EPI / Fardamento</div>
+        <div class="modal-sub" style="margin-bottom:0">Cadastre um novo item para monitoramento</div>
+      </div>
+      <!-- Botão fechar: chama epiFecharModal() -->
+      <button onclick="epiFecharModal()"
+              style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:20px;padding:4px">✕</button>
+    </div>
+
+    <!-- Nome do item e tipo (EPI ou Fardamento) -->
+    <div class="form-row fr2">
+      <div class="fg">
+        <label>Nome do item</label>
+        <input type="text" id="epi-novo-nome" placeholder="Ex: Capacete MSA V-Gard">
+      </div>
+      <div class="fg">
+        <label>Tipo</label>
+        <select id="epi-novo-tipo">
+          <option value="">Selecione...</option>
+          <option value="EPI">EPI</option>
+          <option value="Fardamento">Fardamento</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Colaborador responsável e setor -->
+    <div class="form-row fr2">
+      <div class="fg">
+        <label>Colaborador</label>
+        <input type="text" id="epi-novo-colaborador" placeholder="Nome do colaborador">
+      </div>
+      <div class="fg">
+        <label>Setor</label>
+        <input type="text" id="epi-novo-setor" placeholder="Ex: Operação, Logística...">
+      </div>
+    </div>
+
+    <!-- Datas: entrega e vencimento do item -->
+    <div class="form-row fr2">
+      <div class="fg">
+        <label>Data de entrega</label>
+        <input type="date" id="epi-novo-data-entrega">
+      </div>
+      <div class="fg">
+        <label>Data de vencimento (opcional)</label>
+        <!-- Vencimento depende do tipo de EPI; pode ser deixado em branco -->
+        <input type="date" id="epi-novo-vencimento">
+      </div>
+    </div>
+
+    <!-- Valor monetário e código CA do item -->
+    <div class="form-row fr2">
+      <div class="fg">
+        <label>Valor (R$)</label>
+        <input type="number" id="epi-novo-valor" step="0.01" min="0" placeholder="0,00">
+      </div>
+      <div class="fg">
+        <label>Código / CA</label>
+        <!-- CA = Certificado de Aprovação obrigatório para EPIs no Brasil -->
+        <input type="text" id="epi-novo-codigo" placeholder="Ex: CA 12345">
+      </div>
+    </div>
+
+    <!-- Status inicial do item -->
+    <div class="form-row">
+      <div class="fg">
+        <label>Status inicial</label>
+        <select id="epi-novo-status">
+          <option value="em_uso">Em uso</option>
+          <option value="estoque">Em estoque</option>
+          <option value="perdido">Perdido</option>
+          <option value="quebrado">Quebrado</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Observação livre -->
+    <div class="form-row">
+      <div class="fg">
+        <label>Observação (opcional)</label>
+        <input type="text" id="epi-novo-obs"
+               placeholder="Ex: Entregue com assinatura em ficha">
+      </div>
+    </div>
+
+    <!-- Ações do modal -->
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px;padding-top:14px;border-top:1px solid var(--border)">
+      <button class="btn btn-ghost" onclick="epiFecharModal()">Cancelar</button>
+      <!-- epiSalvarNovoItem() → valida campos e salva no Supabase -->
+      <button class="btn btn-primary" onclick="epiSalvarNovoItem()">Salvar item</button>
+    </div>
+
+  </div>
+</div>

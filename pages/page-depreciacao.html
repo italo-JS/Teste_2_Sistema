@@ -1,0 +1,50 @@
+<!-- ══════════════════════════════
+     PAGE: DEPRECIAÇÃO
+     Alertas de vencimento e resumo por bem
+     ══════════════════════════════ -->
+<div class="page" id="page-depreciacao">
+
+  <!-- Alertas de vencimento -->
+  <div class="card">
+    <div class="card-header">
+      <div><div class="card-title">Alertas de Vencimento de Vida Útil</div><div class="card-sub">Bens próximos ou com vida útil vencida</div></div>
+      <div style="display:flex;gap:8px">
+        <span class="badge badge-red" id="dep-nalert-venc">0 vencidos</span>
+        <span class="badge badge-amber" id="dep-nalert-prox">0 próximos</span>
+      </div>
+    </div>
+    <div class="card-body" id="dep-alertas-body">
+      <div class="empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <div class="empty-title">Nenhum alerta</div>
+        <div class="empty-sub">Adicione bens ao inventário para monitorar a vida útil</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráficos -->
+  <div class="grid2">
+    <div class="card"><div class="card-header"><div><div class="card-title">Depreciação mensal por tipo</div><div class="card-sub">Custo mensal por categoria</div></div></div><div class="card-body"><div class="chart-wrap-sm"><canvas id="chart-dep-tipo"></canvas></div></div></div>
+    <div class="card"><div class="card-header"><div><div class="card-title">Valor original vs valor atual</div></div></div><div class="card-body"><div class="chart-wrap-sm"><canvas id="chart-orig-cont"></canvas></div></div></div>
+  </div>
+
+  <!-- Resumo por bem -->
+  <div class="card">
+    <div class="card-header">
+      <div><div class="card-title">Resumo de depreciação por bem</div><div class="card-sub">Inclui valor atual (original − depreciação acumulada)</div></div>
+      <button class="export-btn" onclick="imprimirRelatorio()" style="border-color:rgba(167,139,250,.3);color:var(--purple);background:var(--purple-dim)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>
+        Gerar Relatório
+      </button>
+    </div>
+    <div class="card-body">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Bem</th><th>Tipo</th><th>Valor Original</th><th>Dep. Acumulada</th><th>Dep. Mensal</th><th>Valor Residual</th><th>% Depreciado</th><th style="color:var(--accent)">Valor Atual</th><th>Status</th><th>Progresso</th></tr></thead>
+          <tbody id="dep-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-depreciacao -->

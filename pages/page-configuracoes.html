@@ -1,0 +1,133 @@
+<!-- ══════════════════════════════
+     PAGE: CONFIGURAÇÕES
+     Responsabilidade: permitir ao usuário ajustar preferências
+     do sistema (nome da organização, responsável, valor residual
+     padrão, janela de alerta de vencimento) e visualizar as
+     credenciais do banco de dados Supabase.
+     Ativação: goPage('configuracoes') → renderiza esta página.
+     Funções JS relacionadas (modules/configuracoes.js):
+       - carregarConfiguracoes()  → lê localStorage e preenche campos
+       - salvarConfiguracoes()    → persiste preferências no localStorage
+       - resetarConfiguracoes()   → restaura valores padrão
+       - limparHistoricoLocal()   → apaga histórico local
+       - limparTudoLocal()        → apaga todos os dados locais
+     ══════════════════════════════ -->
+<div class="page" id="page-configuracoes">
+
+  <!-- ── Configurações Gerais ── -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">⚙️ Configurações Gerais</div>
+        <div class="card-sub">Preferências do sistema</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <!-- Nome da organização e responsável -->
+      <div class="form-row fr2">
+        <div class="fg">
+          <label>Nome da organização</label>
+          <!-- Preenchido por carregarConfiguracoes() via localStorage -->
+          <input type="text" id="cfg-org" placeholder="Ex: Empresa XYZ Ltda.">
+        </div>
+        <div class="fg">
+          <label>Responsável pelo patrimônio</label>
+          <input type="text" id="cfg-responsavel" placeholder="Ex: João Silva">
+        </div>
+      </div>
+
+      <!-- Valor residual padrão e janela de alerta -->
+      <div class="form-row fr2">
+        <div class="fg">
+          <label>Valor residual padrão (%)</label>
+          <!-- Define o % padrão usado na calculadora para residual automático -->
+          <input type="number" id="cfg-residual-pct" value="20" min="0" max="100">
+        </div>
+        <div class="fg">
+          <label>Alerta de vencimento (meses antes)</label>
+          <!-- Quantos meses antes do vencimento o sistema emite alerta -->
+          <input type="number" id="cfg-alerta-meses" value="12" min="1" max="36">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <!-- salvarConfiguracoes() → persiste no localStorage -->
+        <button class="btn btn-primary" onclick="salvarConfiguracoes()">Salvar configurações</button>
+        <!-- resetarConfiguracoes() → volta aos valores padrão -->
+        <button class="btn btn-ghost" onclick="resetarConfiguracoes()">Restaurar padrões</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Banco de Dados (colapsável) ── -->
+  <div class="card">
+    <div class="card-header"
+         onclick="var b=document.getElementById('bd-card-body');var c=document.getElementById('bd-chevron');var aberto=b.style.display==='block';b.style.display=aberto?'none':'block';c.style.transform=aberto?'':'rotate(180deg)';"
+         style="cursor:pointer;user-select:none">
+      <div>
+        <div class="card-title">🗄️ Banco de Dados</div>
+        <div class="card-sub">Credenciais de conexão — somente leitura</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:11px;color:var(--text3)">clique para expandir</span>
+        <!-- Ícone de chevron — rotaciona 180° quando expandido -->
+        <svg id="bd-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" width="16" height="16"
+             style="color:var(--text3);transition:transform .2s">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+    </div>
+    <!-- Corpo oculto por padrão; expandido pelo onclick do card-header acima -->
+    <div id="bd-card-body" style="display:none">
+      <div class="card-body">
+        <div class="notice notice-blue">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
+          </svg>
+          As credenciais abaixo estão fixas no código. Para alterá-las, edite o arquivo
+          <code style="background:var(--bg4);padding:1px 5px;border-radius:4px;font-family:'DM Mono',monospace">app.js</code>.
+        </div>
+        <div class="form-row fr2">
+          <div class="fg">
+            <label>URL do Supabase</label>
+            <!-- Preenchido dinamicamente por carregarConfiguracoes() -->
+            <input type="text" id="cfg-sb-url" placeholder="https://xxxx.supabase.co" readonly>
+          </div>
+          <div class="fg">
+            <label>Chave pública (anon key)</label>
+            <input type="text" id="cfg-sb-key" placeholder="eyJ..." readonly>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Manutenção de Dados ── -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">🧹 Manutenção de Dados</div>
+        <div class="card-sub">Limpeza de cache e dados locais</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="notice notice-red">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/>
+        </svg>
+        As ações abaixo afetam apenas dados locais. O banco Supabase não é alterado.
+      </div>
+      <div class="btn-row">
+        <!-- limparHistoricoLocal() → remove apenas o histórico do localStorage -->
+        <button class="btn btn-ghost" onclick="limparHistoricoLocal()">Limpar histórico local</button>
+        <!-- limparTudoLocal() → remove TODOS os dados locais (use com cuidado) -->
+        <button class="btn btn-red" onclick="limparTudoLocal()">Resetar dados locais</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-configuracoes -->

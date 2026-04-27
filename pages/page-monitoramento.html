@@ -1,0 +1,132 @@
+<!-- ══════════════════════════════
+     PAGE: MONITORAMENTO
+     KPIs, pesquisa, gráficos e tabela unificada de itens
+     ══════════════════════════════ -->
+<div class="page" id="page-monitoramento">
+
+  <!-- Card de Fonte de Dados (oculto por padrão) -->
+  <div class="card" style="display: none;">
+    <div class="card-header">
+      <div>
+        <div class="card-title">🔌 Fonte de Dados</div>
+        <div class="card-sub">Conecte a uma API externa para unificar com o inventário local</div>
+      </div>
+      <span class="badge badge-blue" id="mon-bd-badge">BD desconectado</span>
+    </div>
+    <div class="card-body">
+      <div class="form-row fr2">
+        <div class="fg">
+          <label>URL da API / Endpoint</label>
+          <input type="text" id="mon-api-url" placeholder="https://minha-api.com/patrimonio" />
+        </div>
+        <div class="fg">
+          <label>Token de autenticação (opcional)</label>
+          <input type="text" id="mon-token" placeholder="Bearer token..." />
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-blue" onclick="monConectarBD()">🔗 Conectar e carregar dados</button>
+        <button class="btn btn-ghost" onclick="renderMonitoramento()">↻ Atualizar view</button>
+        <span id="mon-conn-status" style="font-size:11px;color:var(--text3)"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="mon-grid">
+    <div class="mon-kpi"><div class="mon-kpi-label">Total de Itens</div><div class="mon-kpi-val" style="color:var(--text)" id="mon-total">0</div></div>
+    <div class="mon-kpi"><div class="mon-kpi-label">Em Acompanhamento</div><div class="mon-kpi-val" style="color:var(--purple)" id="mon-acomp">0</div></div>
+    <div class="mon-kpi" style="border-color:rgba(245,166,35,.25)"><div class="mon-kpi-label">Alertas de Vencimento</div><div class="mon-kpi-val" style="color:var(--amber)" id="mon-alertas">0</div></div>
+    <div class="mon-kpi" style="border-color:rgba(255,92,92,.25)"><div class="mon-kpi-label">Perdidos / Quebrados</div><div class="mon-kpi-val" style="color:var(--red)" id="mon-perdidos">0</div></div>
+    <div class="mon-kpi" style="border-color:rgba(0,212,170,.25)"><div class="mon-kpi-label">Valor Atual Total</div><div class="mon-kpi-val" style="color:var(--accent)" id="mon-valor">R$ 0,00</div></div>
+  </div>
+
+  <!-- Pesquisa e Filtros -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">🔍 Pesquisa e Filtros</div>
+        <div class="card-sub">Busca unificada nos itens do inventário local e banco de dados</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="form-row fr2" style="margin-bottom:12px">
+        <div class="fg">
+          <label>Pesquisar item</label>
+          <div class="ac-wrap" id="mon-ac-wrap">
+            <input class="ac-input" id="mon-ac-input" type="text" placeholder="Buscar por nome, tipo..." autocomplete="off" oninput="monAcInput(this.value)" onfocus="monAcFocus()" onkeydown="monAcKeyNav(event)"/>
+            <button class="ac-clear" id="mon-ac-clear" type="button" onclick="monAcClear()">✕</button>
+            <div class="ac-dropdown" id="mon-ac-dropdown"><div class="ac-list" id="mon-ac-list"></div></div>
+          </div>
+        </div>
+        <div class="fg" style="flex-direction:row;gap:10px;align-items:flex-end">
+          <div class="fg" style="flex:1">
+            <label>Tipo</label>
+            <select id="mon-ftipo" onchange="renderMonitoramento()" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);font-size:12px;color:var(--text);padding:9px 12px">
+              <option value="">Todos</option>
+              <option>Telefonia</option><option>Informática</option><option>Móveis</option>
+              <option>Equipamento</option><option>Fardamento</option><option>EPI</option>
+              <option>Materiais Diversos</option>
+            </select>
+          </div>
+          <div class="fg" style="flex:1">
+            <label>Fonte</label>
+            <select id="mon-fonte" onchange="renderMonitoramento()" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);font-size:12px;color:var(--text);padding:9px 12px">
+              <option value="ambos">Inventário + BD</option>
+              <option value="inv">Somente Inventário</option>
+              <option value="bd">Somente BD</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detalhe do item selecionado (gerado via JS) -->
+  <div class="mon-detail" id="mon-detail"></div>
+
+  <!-- Gráficos -->
+  <div class="grid2" style="margin-bottom:18px">
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Evolução da depreciação (12 meses)</div><div class="card-sub">Depreciação acumulada mês a mês</div></div></div>
+      <div class="card-body"><div class="chart-wrap"><canvas id="mon-chart-evolucao"></canvas></div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Depreciação por tipo</div><div class="card-sub">Distribuição da depreciação acumulada</div></div></div>
+      <div class="card-body"><div class="chart-wrap"><canvas id="mon-chart-dep"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- % Depreciado — Top 10 -->
+  <div class="card">
+    <div class="card-header"><div><div class="card-title">% Depreciado por item — Top 10</div><div class="card-sub">Itens mais próximos do fim da vida útil</div></div></div>
+    <div class="card-body"><div style="position:relative;height:280px"><canvas id="mon-chart-barras"></canvas></div></div>
+  </div>
+
+  <!-- Tabela de todos os itens -->
+  <div class="card">
+    <div class="card-header">
+      <div><div class="card-title">Todos os itens monitorados</div><div class="card-sub">Clique em uma linha para ver o detalhamento</div></div>
+      <span class="badge badge-green" id="mon-table-count">—</span>
+    </div>
+    <div class="card-body">
+      <div class="mon-tabela-filtros">
+        <input id="mon-tabela-busca" type="text" placeholder="🔍 Buscar por nome, tipo, filial..." oninput="monTabelaPage=0;monRenderTable(true)">
+        <select id="mon-tabela-tipo" onchange="monTabelaPage=0;monRenderTable(true)"><option value="">Todos os tipos</option></select>
+        <select id="mon-tabela-setor" onchange="monTabelaPage=0;monRenderTable(true)"><option value="">Todos os setores</option></select>
+        <select id="mon-tabela-colaborador" onchange="monTabelaPage=0;monRenderTable(true)"><option value="">Todos os colaboradores</option></select>
+        <button class="export-btn" onclick="monGerarRelatorio()" style="border-color:rgba(0,212,170,.3);color:var(--accent);background:var(--accent-dim);white-space:nowrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>
+          Gerar relatório
+        </button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Itens monitorados</th></tr></thead>
+          <tbody id="mon-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-monitoramento -->

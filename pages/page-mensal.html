@@ -1,0 +1,24 @@
+<!-- ══════════════════════════════
+     PAGE: RELATÓRIO MENSAL
+     KPIs e agrupamento por mês de aquisição
+     ══════════════════════════════ -->
+<div class="page" id="page-mensal">
+
+  <!-- KPIs mensais -->
+  <div class="stats" style="grid-template-columns:repeat(4,1fr)" id="mensal-stats">
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--purple-dim)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div></div><div class="stat-label">Meses com registros</div><div class="stat-value" style="color:var(--purple)" id="ms-meses">0</div></div>
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--blue-dim)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/></svg></div></div><div class="stat-label">Total de itens</div><div class="stat-value" style="color:var(--blue)" id="ms-total-itens">0</div></div>
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--amber-dim)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div></div><div class="stat-label">Valor total adquirido</div><div class="stat-value" style="color:var(--amber)" id="ms-total-val">R$ 0,00</div></div>
+    <div class="stat-card"><div class="stat-top"><div class="stat-icon" style="background:var(--red-dim)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M13 17H1M13 17l-4-4m4 4l-4 4"/></svg></div></div><div class="stat-label">Dep. acumulada total</div><div class="stat-value" style="color:var(--red)" id="ms-total-dep">R$ 0,00</div></div>
+  </div>
+
+  <!-- Gráfico mensal -->
+  <div class="card">
+    <div class="card-header"><div><div class="card-title">Itens adquiridos por mês</div><div class="card-sub">Volume de aquisições e valor total mensal</div></div><span class="badge badge-purple" id="ms-badge">0 meses</span></div>
+    <div class="card-body"><div class="chart-wrap-lg"><canvas id="chart-mensal"></canvas></div></div>
+  </div>
+
+  <!-- Blocos por mês (gerados via JS) -->
+  <div id="mensal-blocos"></div>
+
+</div><!-- /page-mensal -->

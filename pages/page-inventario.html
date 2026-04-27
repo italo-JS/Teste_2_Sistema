@@ -1,0 +1,45 @@
+<!-- ══════════════════════════════
+     PAGE: INVENTÁRIO
+     Tabela completa de bens com filtros
+     ══════════════════════════════ -->
+<div class="page" id="page-inventario">
+  <div class="card">
+    <div class="card-header">
+      <div><div class="card-title">Inventário Patrimonial</div><div class="card-sub">Todos os bens — Supabase</div></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span class="badge badge-green" id="inv-count">0 itens</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="filter-bar">
+        <input type="text" id="f-busca" placeholder="Buscar por descrição..." oninput="renderInvTable()" style="flex:1;min-width:180px">
+        <select id="f-tipo" onchange="renderInvTable()" style="min-width:150px">
+          <option value="">Todos os tipos</option>
+          <option>Telefonia</option><option>Informática</option><option>Móveis</option>
+          <option>Equipamento</option><option>Fardamento</option><option>EPI</option>
+          <option>Materiais Diversos</option>
+        </select>
+        <select id="f-prod" onchange="renderInvTable()" style="min-width:180px">
+          <option value="">Todos os produtos</option>
+          <option>Celular</option><option>Equipamento de Informática</option><option>Bens de Uso</option>
+          <option>Móveis Planejados</option><option>Equipamento</option><option>Fardamento</option>
+          <option>EPI</option><option>Diversos</option>
+        </select>
+      </div>
+      <div class="notice notice-blue" style="margin-bottom:14px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        A coluna <strong>Valor Atual</strong> mostra o valor original menos toda a depreciação acumulada até hoje.
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Bem</th><th>Produto</th><th>Tipo</th><th>Aquisição</th><th>Valor Original</th><th>Dep. Acumulada</th><th>Valor Atual</th><th>Vida Restante</th><th>Status</th><th></th></tr></thead>
+          <tbody id="inv-tbody"></tbody>
+        </table>
+      </div>
+      <div class="total-bar">
+        <div><div class="total-label">Depreciação Total do Inventário</div><div style="font-size:11px;color:var(--text3);margin-top:2px">Soma de todas as depreciações acumuladas</div></div>
+        <div class="total-val" id="inv-total">R$ 0,00</div>
+      </div>
+    </div>
+  </div>
+</div><!-- /page-inventario -->

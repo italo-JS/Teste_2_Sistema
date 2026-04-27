@@ -1,0 +1,49 @@
+<!-- ══════════════════════════════════════
+     MODAL: RELATÓRIO DE MONITORAMENTO
+     Responsabilidade: exibir relatório consolidado dos itens
+     monitorados (inventário local + banco de dados externo),
+     com resumo estatístico e listagem detalhada por item,
+     com opção de exportar para PDF.
+     Ativação: monGerarRelatorio() → preenche e exibe este modal
+     Fechamento: monFecharRelatorio() → oculta este modal
+     Funções JS relacionadas (modules/monitoramento.js):
+       - monGerarRelatorio()      → monta o conteúdo do relatório
+       - monFecharRelatorio()     → fecha o modal
+       - monImprimirRelatorio()   → aciona window.print() para PDF
+     ══════════════════════════════════════ -->
+<div class="modal-overlay" id="mon-relatorio-overlay"
+     onclick="if(event.target===this)monFecharRelatorio()">
+  <div class="modal" style="width:700px;max-width:95vw;max-height:85vh;display:flex;flex-direction:column">
+
+    <!-- Cabeçalho do modal -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div>
+        <div class="modal-title">📋 Relatório de Monitoramento</div>
+        <!-- Subtítulo preenchido dinamicamente por monGerarRelatorio()
+             Ex: "42 itens · Gerado em 27/04/2026" -->
+        <div class="modal-sub" style="margin-bottom:0" id="mon-rel-sub">—</div>
+      </div>
+      <button onclick="monFecharRelatorio()"
+              style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:20px;padding:4px">✕</button>
+    </div>
+
+    <!-- Grade de resumo estatístico (4 colunas)
+         Preenchido dinamicamente por monGerarRelatorio():
+         total, em acompanhamento, alertas de vencimento, perdidos -->
+    <div id="mon-rel-resumo"
+         style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px">
+    </div>
+
+    <!-- Corpo do relatório: listagem detalhada dos itens monitorados
+         Preenchido dinamicamente por monGerarRelatorio() -->
+    <div id="mon-rel-corpo" style="overflow-y:auto;flex:1"></div>
+
+    <!-- Rodapé com ações -->
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+      <button class="btn btn-ghost" onclick="monFecharRelatorio()">Fechar</button>
+      <!-- monImprimirRelatorio() → aciona window.print() para exportar PDF -->
+      <button class="btn btn-primary" onclick="monImprimirRelatorio()">↓ Exportar PDF</button>
+    </div>
+
+  </div>
+</div>

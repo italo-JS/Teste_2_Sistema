@@ -1,0 +1,171 @@
+<!-- ══════════════════════════════
+     PAGE: CALCULADORA
+     Formulário para cálculo e cadastro de novo bem patrimonial
+     ══════════════════════════════ -->
+<div class="page" id="page-calculadora">
+  <div class="card">
+    <div class="card-header"><div><div class="card-title">Novo Bem Patrimonial</div><div class="card-sub">Preencha os dados para calcular e registrar</div></div><span class="badge badge-amber">Produto e Tipo automáticos</span></div>
+    <div class="card-body">
+      <div class="notice notice-amber">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        Selecione o item para preencher automaticamente Produto, Tipo, Vida útil e Taxa.
+      </div>
+
+      <div class="form-row fr2">
+        <div class="fg">
+          <label>Item / Bem patrimonial</label>
+          <div class="ac-wrap" id="ac-wrap">
+            <input class="ac-input" id="ac-input" type="text" placeholder="Digite para buscar o item..." autocomplete="off" oninput="acOnInput(this.value)" onfocus="acOnFocus()" onkeydown="acKeyNav(event)"/>
+            <button class="ac-clear" id="ac-clear" type="button" onclick="acClear()">✕</button>
+            <div class="ac-dropdown" id="ac-dropdown"><div class="ac-list" id="ac-list"></div></div>
+          </div>
+          <!-- Select oculto — usado internamente pelo JS para acessar os data-attributes dos itens -->
+          <select id="categoria" style="display:none">
+            <option value="">Selecione o item...</option>
+            <optgroup label="Telefonia"><option value="celular" data-prod="Celular" data-tipo="Telefonia" data-vida="3" data-taxa="33.33">Celular / Interfone</option></optgroup>
+            <optgroup label="Informática">
+              <option value="notebook" data-prod="Equipamento de Informática" data-tipo="Informática" data-vida="5" data-taxa="20">Notebook / Desktop / Tablet</option>
+              <option value="cpu"       data-prod="Equipamento de Informática" data-tipo="Informática" data-vida="5" data-taxa="20">CPU</option>
+              <option value="monitor"   data-prod="Equipamento de Informática" data-tipo="Informática" data-vida="5" data-taxa="20">Monitor</option>
+              <option value="impressora" data-prod="Equipamento de Informática" data-tipo="Informática" data-vida="5" data-taxa="20">Impressora</option>
+              <option value="projetor"  data-prod="Equipamento de Informática" data-tipo="Informática" data-vida="5" data-taxa="20">Projetor</option>
+              <option value="nobreak"   data-prod="Equipamento de Informática" data-tipo="Informática" data-vida="5" data-taxa="20">Nobreak</option>
+            </optgroup>
+            <optgroup label="Móveis — Bens de Uso">
+              <option value="cadeira"    data-prod="Bens de Uso" data-tipo="Móveis" data-vida="10" data-taxa="10">Cadeira / Poltrona / Longarina</option>
+              <option value="sofa"       data-prod="Bens de Uso" data-tipo="Móveis" data-vida="10" data-taxa="10">Sofá</option>
+              <option value="mesa"       data-prod="Bens de Uso" data-tipo="Móveis" data-vida="10" data-taxa="10">Mesa / Baia (não planejada)</option>
+              <option value="arm_nao"    data-prod="Bens de Uso" data-tipo="Móveis" data-vida="10" data-taxa="10">Armário / Estante / Bancada / Gaveteiro</option>
+              <option value="microondas" data-prod="Bens de Uso" data-tipo="Móveis" data-vida="10" data-taxa="10">Micro-ondas / Liquidificador / Fritadeira</option>
+              <option value="ventilador" data-prod="Bens de Uso" data-tipo="Móveis" data-vida="5"  data-taxa="20">Ventilador</option>
+              <option value="chaleira"   data-prod="Bens de Uso" data-tipo="Móveis" data-vida="5"  data-taxa="20">Chaleira / Cafeteira</option>
+              <option value="videogame"  data-prod="Bens de Uso" data-tipo="Móveis" data-vida="5"  data-taxa="20">Video Game</option>
+              <option value="aspirador"  data-prod="Bens de Uso" data-tipo="Móveis" data-vida="5"  data-taxa="20">Aspirador de Pó</option>
+            </optgroup>
+            <optgroup label="Móveis — Planejados">
+              <option value="arm_plan"  data-prod="Móveis Planejados" data-tipo="Móveis" data-vida="10" data-taxa="10">Armário / Estante / Bancada (confeccionado)</option>
+              <option value="mesa_plan" data-prod="Móveis Planejados" data-tipo="Móveis" data-vida="10" data-taxa="10">Mesa / Baia (planejada)</option>
+              <option value="painel"    data-prod="Móveis Planejados" data-tipo="Móveis" data-vida="10" data-taxa="10">Painel Ripado / Liso</option>
+            </optgroup>
+            <optgroup label="Equipamentos">
+              <option value="tv"        data-prod="Equipamento" data-tipo="Equipamento" data-vida="10" data-taxa="10">TV / Climatizador</option>
+              <option value="bebedouro" data-prod="Equipamento" data-tipo="Equipamento" data-vida="10" data-taxa="10">Bebedouro / Frigobar / Geladeira</option>
+              <option value="ar"        data-prod="Equipamento" data-tipo="Equipamento" data-vida="10" data-taxa="10">Central de Ar / Cortina de Vento</option>
+              <option value="som"       data-prod="Equipamento" data-tipo="Equipamento" data-vida="10" data-taxa="10">Aparelho de Som</option>
+              <option value="rack"      data-prod="Equipamento" data-tipo="Equipamento" data-vida="10" data-taxa="10">Rack</option>
+            </optgroup>
+            <optgroup label="Fardamento">
+              <option value="polo_verm_m" data-prod="Fardamento" data-tipo="Fardamento" data-vida="1"    data-taxa="100">Camisa Polo Vermelha — Masculino</option>
+              <option value="polo_verm_f" data-prod="Fardamento" data-tipo="Fardamento" data-vida="1"    data-taxa="100">Camisa Polo Vermelha — Feminino</option>
+              <option value="polo_bca_m"  data-prod="Fardamento" data-tipo="Fardamento" data-vida="1"    data-taxa="100">Camisa Polo Branca — Masculino</option>
+              <option value="polo_bca_f"  data-prod="Fardamento" data-tipo="Fardamento" data-vida="1"    data-taxa="100">Camisa Polo Branca — Feminino</option>
+              <option value="prem_bca_m"  data-prod="Fardamento" data-tipo="Fardamento" data-vida="0.33" data-taxa="100">Camisa Premium Branca — Masculino (4m)</option>
+              <option value="prem_pta_m"  data-prod="Fardamento" data-tipo="Fardamento" data-vida="0.33" data-taxa="100">Camisa Premium Preta — Masculino (4m)</option>
+              <option value="calca_jeans_m" data-prod="Fardamento" data-tipo="Fardamento" data-vida="0.5" data-taxa="100">Calça Jeans — Masculino (6m)</option>
+              <option value="calca_social_pta_m" data-prod="Fardamento" data-tipo="Fardamento" data-vida="0.67" data-taxa="100">Calça Social Preta — Masculino (8m)</option>
+            </optgroup>
+            <optgroup label="EPI">
+              <option value="capacete_branco"  data-prod="EPI" data-tipo="EPI" data-vida="1"    data-taxa="100">Capacete de Segurança (Branco)</option>
+              <option value="capacete_vermelho" data-prod="EPI" data-tipo="EPI" data-vida="1"    data-taxa="100">Capacete de Segurança (Vermelho)</option>
+              <option value="capacete_moto"     data-prod="EPI" data-tipo="EPI" data-vida="4"    data-taxa="25">Capacete para Motoqueiro</option>
+              <option value="luva_coberta_gr9"  data-prod="EPI" data-tipo="EPI" data-vida="1"    data-taxa="100">Luva Coberta Isol GR-9 (Par)</option>
+              <option value="luva_malha_preta"  data-prod="EPI" data-tipo="EPI" data-vida="0.04" data-taxa="100">Luva de Malha Pigmentada (Par) — 15 dias</option>
+              <option value="luva_nylon_pu"     data-prod="EPI" data-tipo="EPI" data-vida="0.04" data-taxa="100">Luva de Nylon com PU (Par) — 15 dias</option>
+              <option value="luva_vaqueta"      data-prod="EPI" data-tipo="EPI" data-vida="0.17" data-taxa="100">Luva de Vaqueta (Par) — 2 meses</option>
+              <option value="bota_seg_40"  data-prod="EPI" data-tipo="EPI" data-vida="1" data-taxa="100">Bota de Segurança Nº 40</option>
+              <option value="bota_seg_41"  data-prod="EPI" data-tipo="EPI" data-vida="1" data-taxa="100">Bota de Segurança Nº 41</option>
+              <option value="bota_seg_42"  data-prod="EPI" data-tipo="EPI" data-vida="1" data-taxa="100">Bota de Segurança Nº 42</option>
+              <option value="bota_seg_43"  data-prod="EPI" data-tipo="EPI" data-vida="1" data-taxa="100">Bota de Segurança Nº 43</option>
+              <option value="cinto_para"   data-prod="EPI" data-tipo="EPI" data-vida="2" data-taxa="50">Cinto Tipo Paraquedista</option>
+              <option value="oculos_incolor" data-prod="EPI" data-tipo="EPI" data-vida="0.17" data-taxa="100">Óculos de Proteção Incolor — 2 meses</option>
+              <option value="cone_50_rigido" data-prod="EPI" data-tipo="EPI" data-vida="1" data-taxa="100">Cone de Sinalização 50cm</option>
+            </optgroup>
+            <optgroup label="Materiais Diversos">
+              <option value="facao"     data-prod="Diversos" data-tipo="Materiais Diversos" data-vida="5" data-taxa="20">Facão</option>
+              <option value="gabaritex" data-prod="Diversos" data-tipo="Materiais Diversos" data-vida="2" data-taxa="50">Gabaritex</option>
+            </optgroup>
+            <optgroup label="Outros">
+              <option value="personalizado" data-prod="" data-tipo="" data-vida="" data-taxa="">Personalizado</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="fg"><label>Descrição do bem</label><input type="text" id="descricao" placeholder="Ex: Notebook Dell Latitude E5540"></div>
+      </div>
+
+      <div class="form-row fr4">
+        <div class="fg"><label>Produto</label><input type="text" id="produto" readonly placeholder="—"><div class="field-pills"><span class="pill pill-prod" id="pill-prod">—</span></div></div>
+        <div class="fg"><label>Tipo</label><input type="text" id="tipo" readonly placeholder="—"><div class="field-pills"><span class="pill pill-tipo" id="pill-tipo">—</span></div></div>
+        <div class="fg"><label>Valor de aquisição (R$)</label><input type="number" id="valor" step="0.01" min="0" placeholder="0,00" oninput="autoResidual()"></div>
+        <div class="fg"><label>Data de aquisição</label><input type="date" id="data"></div>
+      </div>
+
+      <div class="form-row fr4">
+        <div class="fg"><label>Vida útil (anos)</label><input type="number" id="vida" step="0.01" min="0.04" placeholder="5"></div>
+        <div class="fg"><label>Taxa (% ao ano)</label><input type="number" id="taxa" step="0.01" min="0" max="100" placeholder="20"></div>
+        <div class="fg"><label>Método</label>
+          <select id="metodo">
+            <option value="linear">Linear (cotas constantes)</option>
+            <option value="decrescente">Saldos decrescentes</option>
+            <option value="soma">Soma dos dígitos</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Valor residual (R$)</label>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;background:var(--bg4);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;cursor:pointer;user-select:none" onclick="toggleResidual()">
+            <div id="res-toggle-box" style="width:16px;height:16px;border-radius:4px;border:2px solid var(--accent);background:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s">
+              <svg id="res-toggle-check" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <span id="res-toggle-label" style="font-size:11px;font-weight:500">Sim, considerar valor residual</span>
+          </div>
+          <input type="number" id="residual" step="0.01" min="0" value="0" placeholder="20% do valor (automático)">
+          <span style="font-size:9px;color:var(--text3);margin-top:2px" id="res-hint">Calculado automaticamente como 20% do valor de aquisição</span>
+        </div>
+      </div>
+
+      <!-- Status do item -->
+      <div class="form-row" style="margin-bottom:14px">
+        <div class="fg">
+          <label>Status do item</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <div id="status-acomp" onclick="setStatus('acompanhamento')" style="flex:1;min-width:180px;display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--r);border:2px solid var(--accent);background:var(--accent-dim);cursor:pointer;user-select:none">
+              <div style="width:18px;height:18px;border-radius:50%;border:2px solid var(--accent);background:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0"><div style="width:7px;height:7px;border-radius:50%;background:#000"></div></div>
+              <div><div style="font-size:12px;font-weight:600;color:var(--accent)">📊 Acompanhamento</div><div style="font-size:10px;color:var(--text3);margin-top:1px">Item ativo — acompanhar depreciação</div></div>
+            </div>
+            <div id="status-perdido" onclick="setStatus('perdido')" style="flex:1;min-width:180px;display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--r);border:2px solid var(--border);background:transparent;cursor:pointer;user-select:none">
+              <div id="status-perdido-dot" style="width:18px;height:18px;border-radius:50%;border:2px solid var(--text3);display:flex;align-items:center;justify-content:center;flex-shrink:0"><div style="width:7px;height:7px;border-radius:50%"></div></div>
+              <div><div style="font-size:12px;font-weight:600;color:var(--text2)" id="status-perdido-label">⚠️ Perdido / Quebrado</div><div style="font-size:10px;color:var(--text3);margin-top:1px">Item não está mais em uso</div></div>
+            </div>
+          </div>
+          <div style="margin-top:8px;display:none" id="status-obs-wrap">
+            <input type="text" id="status-obs" placeholder="Observação (ex: Perdido em campo em 10/03/2026)..." style="width:100%;padding:8px 12px;background:var(--bg3);border:1px solid rgba(255,92,92,.3);border-radius:var(--r);font-size:12px;font-family:'DM Sans',sans-serif;outline:none">
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="calcular()">Calcular depreciação</button>
+        <button class="btn btn-primary" onclick="adicionar()">Adicionar ao inventário</button>
+        <button class="btn btn-ghost"   onclick="limpar()">Limpar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resultado do cálculo -->
+  <div class="card hidden" id="results">
+    <div class="card-header"><div><div class="card-title" id="res-titulo">Resultado</div><div class="card-sub" id="res-sub">—</div></div><div style="display:flex;gap:8px" id="res-pills"></div></div>
+    <div class="card-body">
+      <div class="res-grid">
+        <div class="res-card"><div class="res-label">Depreciação Mensal</div><div class="res-value em" id="r-mensal">—</div></div>
+        <div class="res-card"><div class="res-label">Depreciação Anual</div><div class="res-value" id="r-anual">—</div></div>
+        <div class="res-card"><div class="res-label">Depreciação Acumulada</div><div class="res-value" style="color:var(--blue)" id="r-acum">—</div></div>
+        <div class="res-card" style="border:1px solid rgba(0,212,170,.3);background:rgba(0,212,170,.06)"><div class="res-label" style="color:var(--accent)">💡 Valor Atual do Item</div><div class="res-value" style="color:var(--accent);font-size:22px" id="r-contabil">—</div></div>
+        <div class="res-card"><div class="res-label">Tempo de Uso</div><div class="res-value" style="color:var(--amber)" id="r-uso">—</div></div>
+        <div class="res-card"><div class="res-label">Vida Útil Restante</div><div class="res-value" style="color:var(--red)" id="r-rest">—</div></div>
+      </div>
+      <div style="margin-bottom:18px"><div class="card-sub" style="margin-bottom:10px;font-size:10px;text-transform:uppercase">Evolução do Valor Contábil</div><div class="chart-wrap"><canvas id="grafico"></canvas></div></div>
+      <div class="card-sub" style="margin-bottom:10px;font-size:10px;text-transform:uppercase">Tabela de Depreciação Anual</div>
+      <div class="table-wrap"><table><thead><tr><th>Período</th><th>Valor Inicial</th><th>Dep. Anual</th><th>Acumulada</th><th>Valor Contábil</th><th>% Depreciado</th></tr></thead><tbody id="tbody"></tbody></table></div>
+    </div>
+  </div>
+
+</div><!-- /page-calculadora -->

@@ -1,0 +1,53 @@
+<!-- ══════════════════════════════
+     PAGE: HISTÓRICO
+     Timeline, evolução do patrimônio e resumo estatístico
+     ══════════════════════════════ -->
+<div class="page" id="page-historico">
+
+  <!-- Timeline + Gráfico de evolução -->
+  <div class="grid2">
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Timeline de atividades</div><div class="card-sub">Registro de todas as ações realizadas</div></div></div>
+      <div class="card-body" id="hist-body">
+        <div class="empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <div class="empty-title">Sem atividades</div>
+          <div class="empty-sub">Adicione bens ao inventário</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Evolução do patrimônio</div><div class="card-sub">Valor total ao longo das adições</div></div></div>
+      <div class="card-body"><div class="chart-wrap"><canvas id="chart-hist"></canvas></div></div>
+    </div>
+  </div>
+
+  <!-- Resumo estatístico -->
+  <div class="card">
+    <div class="card-header"><div><div class="card-title">Resumo estatístico</div></div></div>
+    <div class="card-body">
+      <div class="grid3" id="hist-stats">
+        <div class="res-card"><div class="res-label">Bem mais valioso</div><div class="res-value em" id="hs-valioso">—</div></div>
+        <div class="res-card"><div class="res-label">Maior depreciação acum.</div><div class="res-value" style="color:var(--red)" id="hs-maiorDep">—</div></div>
+        <div class="res-card"><div class="res-label">Ticket médio</div><div class="res-value" style="color:var(--amber)" id="hs-medio">—</div></div>
+        <div class="res-card"><div class="res-label">Total investido</div><div class="res-value" style="color:var(--blue)" id="hs-total">—</div></div>
+        <div class="res-card"><div class="res-label">Valor atual total</div><div class="res-value" style="color:var(--accent)" id="hs-residual">—</div></div>
+        <div class="res-card"><div class="res-label">Taxa média de dep.</div><div class="res-value" style="color:var(--purple)" id="hs-taxa">—</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detalhamento com valor atual -->
+  <div class="card">
+    <div class="card-header"><div><div class="card-title">Detalhamento com Valor Atual</div><div class="card-sub">Valor atual = original − depreciação acumulada</div></div></div>
+    <div class="card-body">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Bem</th><th>Tipo</th><th>Data Adição</th><th>Valor Original</th><th>Dep. Acumulada</th><th style="color:var(--accent)">Valor Atual</th></tr></thead>
+          <tbody id="hist-valor-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-historico -->
